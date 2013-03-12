@@ -1,14 +1,4 @@
-(ns roomba-drone-friends.roomba-music-player
-  (:import roombacomm.RoombaCommSerial))
-
-
-(def roomba (RoombaCommSerial. ))
-(map println (.listPorts roomba))
-(def portname "/dev/cu.FireFly-943A-SPP-12")
-(.connect roomba portname)
-(.startup roomba)
-(.control roomba)
-(.updateSensors roomba) 
+(ns roomba-drone-friends.roomba-music-player)
 
 ;; Notes match iRobot specs
 ;; http://www.irobot.com/images/consumer/hacker/roomba_sci_spec_manual.pdf
@@ -22,7 +12,6 @@
             :F 77
             :G 79
              })
-
 
 (defn note-length [seconds]
   (int (* seconds 64)))
@@ -75,6 +64,3 @@
    [whole-whole-note :As]
    ])
 
-
-
-(roomba-music-player roomba put-on-your-sunday-clothes)
