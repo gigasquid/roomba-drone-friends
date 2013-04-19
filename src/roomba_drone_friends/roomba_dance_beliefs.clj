@@ -15,7 +15,7 @@
 
 (def roomba (RoombaCommSerial. ))
 (map println (.listPorts roomba))
-(def portname "/dev/cu.FireFly-943A-SPP-2")
+(def portname "/dev/cu.FireFly-943A-SPP-3")
 (.connect roomba portname)
 (.startup roomba)
 (.control roomba)
@@ -52,24 +52,24 @@
 
 (def-belief-action ba-dancing-with-drone
   "I am dancing with the drone"
-  (fn [navdata] (not @danceover))
+  (fn [navdata] (not @dance-over))
   (fn [navdata] (do
                  (.stop roomba)
                  (roomba-music-player roomba put-on-your-sunday-clothes)
                  (.drive roomba 200 -400)
                  (Thread/sleep 60000)
                  (.stop roomba)
-                 (reset! dance-over? true))))
+                 (reset! dance-over true))))
 
 
 (def-goal g-drone-dance
   "I want to dance with the drone."
-  (fn [navdata] @dance-over?)
+  (fn [navdata] @dance-over)
   [ba-dancing-with-drone])
 
 (set-roomba-goal-list [g-find-drone-friend g-drone-dance])
 
-(reset! dance-over false)
+(reset! dance-over true)
 
 (defn find-friend [_]
   (log/info (str "dance over " @dance-over))
@@ -81,18 +81,16 @@
     (log/info (log-goal-info)))
     (find-friend nil))
 
-(defn test-friend [_]
-  (log/info "George"))
-
-(log/info "Hey")
-
 
 (send-off roomba-agent find-friend)
-(send-off roomba-agent test-friend)
-@dance-over?
+@dance-over
 
 @roomba-goal-list
 (eval-roomba-goals @nav-data)
+
+(reset! dance-over true)
+(reset! nav-data {:targets-num 1})
+@nav-data
 
 (.stop roomba)
 
