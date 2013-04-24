@@ -2,26 +2,10 @@
   (:require[roomba-drone-friends.roomba-goals :refer :all]
            [roomba-drone-friends.roomba-music-player :refer :all]
            [ clj-logging-config.log4j :as log-config]
-           [ clojure.tools.logging :as log])
+           [ clojure.tools.logging :as log]
+           [ clj-drone.navdata :refer [nav-data]])
   (:import roombacomm.RoombaCommSerial))
 
-(defn init-logger []
-  (log-config/set-logger! :level :debug
-                          :out "logs/roomba.log"))
-(init-logger)
-
-(def nav-data (atom {:targets-num 0}))
-
-
-(def roomba (RoombaCommSerial. ))
-(map println (.listPorts roomba))
-(def portname "/dev/cu.FireFly-943A-SPP-3")
-(.connect roomba portname)
-(.startup roomba)
-(.control roomba)
-(.updateSensors roomba)
-(.modeAsString roomba)
-(.sensorsAsString roomba)
 
 (def roomba-agent (agent 0))
 
@@ -32,44 +16,46 @@
 (def dance-over (atom false))
 (def roomba-goals (atom []))
 
-(defn do-spiral []
+(defn do-spiral [roomba]
   (do
     (.drive roomba speed @radius)
     (swap! radius + dr)
     (.pause roomba pause-time)))
 
 ;; Trying to find the drone
-(def-belief-action ba-see-no-drone
-  "The drone does not see me"
-  (fn [{:keys [targets-num]}] (not (= targets-num 1)))
-  (fn [navdata] (do-spiral)))
+(defn create-beliefs-goals [roomba]
+  (def-belief-action ba-see-no-drone
+    "The drone does not see me"
+    (fn [{:keys [targets-num]}] (not (= targets-num 1)))
+    (fn [navdata] (do-spiral roomba)))
 
 
-(def-goal g-find-drone-friend
-  "I want to find the drone and be friends."
-  (fn [{:keys [targets-num]}] (= targets-num 1))
-  [ba-see-no-drone])
+  (def-goal g-find-drone-friend
+    "I want to find the drone and be friends."
+    (fn [{:keys [targets-num]}] (= targets-num 1))
+    [ba-see-no-drone])
 
-(def-belief-action ba-dancing-with-drone
-  "I am dancing with the drone"
-  (fn [navdata] (not @dance-over))
-  (fn [navdata] (do
-                 (.stop roomba)
-                 (roomba-music-player roomba put-on-your-sunday-clothes)
-                 (.drive roomba 200 -400)
-                 (Thread/sleep 60000)
-                 (.stop roomba)
-                 (reset! dance-over true))))
+  (def-belief-action ba-dancing-with-drone
+    "I am dancing with the drone"
+    (fn [navdata] (not @dance-over))
+    (fn [navdata] (do
+                   (.stop roomba)
+                   (roomba-music-player roomba put-on-your-sunday-clothes)
+                   (.drive roomba 200 -400)
+                   (Thread/sleep 60000)
+                   (.stop roomba)
+                   (reset! dance-over true))))
 
 
-(def-goal g-drone-dance
-  "I want to dance with the drone."
-  (fn [navdata] @dance-over)
-  [ba-dancing-with-drone])
+  (def-goal g-drone-dance
+    "I want to dance with the drone."
+    (fn [navdata] @dance-over)
+    [ba-dancing-with-drone])
+  (set-roomba-goal-list [g-find-drone-friend g-drone-dance]))
 
-(set-roomba-goal-list [g-find-drone-friend g-drone-dance])
+(defn init-roomba [roomba]
+  (create-beliefs-goals roomba))
 
-(reset! dance-over true)
 
 (defn find-friend [_]
   (log/info (str "dance over " @dance-over))
@@ -78,20 +64,6 @@
     (log/info "doing")
     (eval-roomba-goals @nav-data)
     (Thread/sleep 5000)
-    (log/info (log-goal-info)))
-    (find-friend nil))
+    (log/info (log-goal-info))
+    (find-friend nil)))
 
-
-(send-off roomba-agent find-friend)
-@dance-over
-
-@roomba-goal-list
-(eval-roomba-goals @nav-data)
-
-(reset! dance-over true)
-(reset! nav-data {:targets-num 1})
-@nav-data
-
-(.stop roomba)
-
-@roomba-agent

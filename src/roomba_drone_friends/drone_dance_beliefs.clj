@@ -1,8 +1,8 @@
 (ns roomba-drone-friends.drone-dance-beliefs
-  (:require[clj-drone.core :refer :all]
-           [clj-drone.goals :refer :all]))
+  (:require [clj-drone.core :refer :all]
+            [clj-drone.goals :refer :all]
+            [roomba-drone-friends.roomba-dance-beliefs :refer [dance-over]]))
 
-(def dance-over (atom false))
 (def cruising-altitude 1.5)
 
 ;;; Taking off
