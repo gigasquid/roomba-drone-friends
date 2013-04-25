@@ -1,5 +1,6 @@
 (ns roomba-drone-friends.core
   (:require [clj-drone.core :refer :all]
+            [clj-drone.navdata :refer :all]
             [roomba-drone-friends.roomba-music-player :refer :all]
             [roomba-drone-friends.drone-dance-beliefs :refer :all]
             [roomba-drone-friends.roomba-dance-beliefs :refer :all]
@@ -18,7 +19,7 @@
 ;;; connect up to the Roobma
 (def roomba (RoombaCommSerial. ))
 (map println (.listPorts roomba))
-(def portname "/dev/cu.FireFly-943A-SPP-6")
+(def portname "/dev/cu.FireFly-943A-SPP-7")
 (.connect roomba portname)
 (.startup roomba)
 (.control roomba)
@@ -56,7 +57,9 @@
 (@dance-over)
 (reset! dance-over true)
 (.stop roomba)
-(end-navstream) 
+(end-navstream)
+(agent-errors nav-agent)
+(restart-agent nav-agent {})
 
 
 
