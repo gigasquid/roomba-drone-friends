@@ -19,13 +19,14 @@
 ;;; connect up to the Roobma
 (def roomba (RoombaCommSerial. ))
 (map println (.listPorts roomba))
-(def portname "/dev/cu.FireFly-943A-SPP-7")
+(def portname "/dev/cu.FireFly-943A-SPP-16")
 (.connect roomba portname)
 (.startup roomba)
 (.control roomba)
 (.updateSensors roomba)
 (.modeAsString roomba)
 (.sensorsAsString roomba)
+(.playNote roomba 72 40)
 (init-roomba roomba)
 
 
@@ -42,10 +43,6 @@
     (drone :init-targeting)
     (drone :target-roundel-v)
     (drone :hover-on-roundel)
-
-    (drone :take-off)
-    (drone :land)
-
     ))
 
 (drone-init-navdata)
@@ -56,10 +53,13 @@
 (restart-agent roomba-agent 0)
 (@dance-over)
 (reset! dance-over true)
+(reset! dance-over false)
 (.stop roomba)
 (end-navstream)
 (agent-errors nav-agent)
 (restart-agent nav-agent {})
+(drone :land)
+@current-goal-list
 
 
 

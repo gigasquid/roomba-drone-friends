@@ -10,3 +10,10 @@ pom.xml
 .lein-plugins
 .roomba_config
 logs/drone.log
+highlight.css
+hs_err_pid1870.log
+hs_err_pid1911.log
+html/drone_nav_data.html
+html/drone_nav_data2.html
+html/drone_nav_goals.html
+logs/roomba.log

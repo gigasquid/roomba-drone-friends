@@ -15,6 +15,7 @@
 (def radius (atom 10))
 (def dance-over (atom false))
 (def roomba-goals (atom []))
+(def met-drone (atom false))
 
 (defn do-spiral [roomba]
   (do
@@ -22,8 +23,28 @@
     (swap! radius + dr)
     (.pause roomba pause-time)))
 
+(defn meet-drone [roomba]
+  (do
+    (.goForward roomba)
+    (Thread/sleep 8000)
+    (.stop roomba)))
+
 ;; Trying to find the drone
 (defn create-beliefs-goals [roomba]
+
+  (def-belief-action ba-not-met-drone
+    "I need to go forward and meet the drone"
+    (fn [_] (not @met-drone))
+    (fn [navdata] (do
+                   (meet-drone roomba)
+                   (reset! met-drone true))))
+
+
+  (def-goal g-meet-drone
+    "I want to go forward and meet the drone"
+    (fn [_] @met-drone)
+    [ba-not-met-drone])
+
   (def-belief-action ba-see-no-drone
     "The drone does not see me"
     (fn [{:keys [targets-num]}] (not (= targets-num 1)))
@@ -51,7 +72,7 @@
     "I want to dance with the drone."
     (fn [navdata] @dance-over)
     [ba-dancing-with-drone])
-  (set-roomba-goal-list [g-find-drone-friend g-drone-dance]))
+  (set-roomba-goal-list [g-meet-drone g-find-drone-friend g-drone-dance]))
 
 (defn init-roomba [roomba]
   (create-beliefs-goals roomba))
