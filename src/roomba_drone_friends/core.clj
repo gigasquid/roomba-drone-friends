@@ -19,7 +19,7 @@
 ;;; connect up to the Roobma
 (def roomba (RoombaCommSerial. ))
 (map println (.listPorts roomba))
-(def portname "/dev/cu.FireFly-943A-SPP-16")
+(def portname "/dev/cu.FireFly-943A-SPP-1")
 (.connect roomba portname)
 (.startup roomba)
 (.control roomba)

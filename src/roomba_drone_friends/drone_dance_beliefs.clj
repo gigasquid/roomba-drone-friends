@@ -32,7 +32,7 @@
 (def-belief-action ba-alt-ok
   "I am at cruising altitude - I don't see Roomba yet"
   (fn [{:keys [altitude]}] (> altitude cruising-altitude))
-  (fn [navdata] (drone :hover)))
+  (fn [navdata] (drone :fly 0.05 0 0 0.8)))
 
 (def-goal g-spot-roomba
   "I want to hover at cruising altitude to watch for Roomba"
@@ -46,7 +46,9 @@
 (def-belief-action ba-dancing
   "The Roomba is still dancing with me!"
   (fn [navdata] (not @dance-over))
-  (fn [navdata] (drone :led_blink_snake)))
+  (fn [navdata] (do
+                 (drone :hover)
+                 (drone :led_blink_snake))))
 
 (def-goal g-dance
   "I want to dance with the Roomba."
