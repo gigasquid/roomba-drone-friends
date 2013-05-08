@@ -63,7 +63,7 @@
                    (.stop roomba)
                    (roomba-music-player roomba put-on-your-sunday-clothes)
                    (.drive roomba 200 -400)
-                   (Thread/sleep 60000)
+                   (Thread/sleep 30000)
                    (.stop roomba)
                    (reset! dance-over true))))
 
