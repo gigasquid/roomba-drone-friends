@@ -19,7 +19,7 @@
 ;;; connect up to the Roobma
 (def roomba (RoombaCommSerial. ))
 (map println (.listPorts roomba))
-(def portname "/dev/cu.FireFly-943A-SPP-1")
+(def portname "/dev/cu.FireFly-943A-SPP-2")
 (.connect roomba portname)
 (.startup roomba)
 (.control roomba)
@@ -53,13 +53,14 @@
 (restart-agent roomba-agent 0)
 (@dance-over)
 (reset! dance-over true)
-(reset! dance-over false)
+(reset! dance-over false)D
 (.stop roomba)
 (end-navstream)
 (agent-errors nav-agent)
 (restart-agent nav-agent {})
 (drone :land)
 @current-goal-list
+@nav-data
 
 
 
