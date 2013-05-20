@@ -8,7 +8,7 @@
 
 ;;Find your port for your Roomba
 (map println (.listPorts roomba))
-(def portname "/dev/cu.FireFly-943A-SPP-2")
+(def portname "/dev/cu.FireFly-943A-SPP-4")
 (.connect roomba portname)
 (.startup roomba)  ;;puts Roomba in safe Mode
 ;; What mode is Roomba in?
@@ -43,13 +43,18 @@
 (.sensorsAsString roomba)
 
 
-(defn bark [r]
-  (doto r
-    (.vacuum true)
-    (.playNote 50 5)
-    (.pause 150)
-    (.vacuum false)))
+(defn spin-n-beep [r]
+  (do
+    (.playNote r 72 30)
+    (Thread/sleep 800)
+    (.playNote r 74 30)
+    (Thread/sleep 800)
+    (.playNote r 76 30)
+    (Thread/sleep 800)
+    (.spinRight r)
+    (Thread/sleep 3000)
+    (.stop roomba)))
 
-(bark roomba)
+(spin-n-beep roomba)
 
 (.disconnect roomba)
