@@ -33,8 +33,8 @@
   (fn [navdata] (drone :up 0.2)))
 
 (def-goal g-cruising-altitude
-  "I want to get to a cruising altitude of 1 m"
-  (fn [{:keys [altitude]}] (>= altitude 1))
+  "I want to get to a cruising altitude of 1.5 m"
+  (fn [{:keys [altitude]}] (>= altitude 1.5))
   [ba-too-low])
 
 ;;; Landing
@@ -63,6 +63,11 @@
 
 ;;;  initialization to run
 
-(drone-initialize)
-(drone-init-navdata)
-(end-navstream)  ;;If running in the repl end the nav-stream when done
+;(drone :emergency)
+;(drone-initialize)
+;(drone-init-navdata)
+
+;(end-navstream)
+
+
+;;If running in the repl end the nav-stream when done

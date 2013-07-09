@@ -1,13 +1,12 @@
 # roomba-drone-friends
 
-A Clojure library designed to ... well, that part is up to you.
+Code from the "Joy of Flying Robots" presentation.
+Uses the [clj-drone library]("https://github.com/gigasquid/clj-drone")
+and the setup from the [clj-roomba]("https://github.com/gigasquid/clj-roomba")
 
-## Usage
-
-FIXME
 
 ## License
 
-Copyright © 2013 FIXME
+Copyright © 2013 Carin Meier
 
 Distributed under the Eclipse Public License, the same as Clojure.
